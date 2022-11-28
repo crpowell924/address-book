@@ -1,17 +1,15 @@
-from typing import Union
 from fastapi import FastAPI, Body, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import JSONResponse
 from pymongo import MongoClient
-import bson.json_util as json_util
 from bson.objectid import ObjectId
-import json
+from app.helpers import format_json
 
 app = FastAPI()
 
+# CORS middleware
 origins = [ "http://localhost:3000" ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -20,18 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# DB Connection
 client = MongoClient("mongodb://user:pass@localhost:27017/")
 db = client.addressbook
-
-def format_json(data):
-    data = json.loads(json_util.dumps(data))
-    data["_id"] = data["_id"]["$oid"]
-    return data
-
-
-# @app.get("/")
-# def read_root():
-#     return {"message": "Hello World"}
 
 @app.get("/addresses")
 def list_addresses():
@@ -45,9 +34,10 @@ def list_addresses():
 @app.get("/addresses/{item_id}")
 def get_address(item_id: str):
     addresses = db.addresses
-    address = addresses.find_one({"_id": ObjectId(item_id) })
-    print(address)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=format_json(address))
+    if (address := addresses.find_one({"_id": ObjectId(item_id) })) is not None:
+        print(address)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=format_json(address))
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Address {item_id} not found")
 
 @app.post("/addresses")
 def create_address(address = Body(...)):
@@ -62,10 +52,12 @@ def create_address(item_id: str, address = Body(...)):
     addresses = db.addresses
     filter = { "_id": ObjectId(item_id) }
     newValues = { "$set": address }
-    updateResp = addresses.update_one(filter, newValues)
-    updated_address = addresses.find_one(filter)
-    print(updated_address)
-    return JSONResponse(status_code=status.HTTP_200_OK, content=format_json(updated_address))
+    update_result = addresses.update_one(filter, newValues)
+    if update_result.modified_count == 1:
+        updated_address = addresses.find_one(filter)
+        print(updated_address)
+        return JSONResponse(status_code=status.HTTP_200_OK, content=format_json(updated_address))
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Address {item_id} not found")
 
 @app.delete("/addresses/{item_id}")
 def delete_address(item_id: str):
@@ -73,4 +65,4 @@ def delete_address(item_id: str):
     address = addresses.delete_one({"_id": ObjectId(item_id) })
     if (address.deleted_count == 1):
         return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
-    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND)
+    return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, detail=f"Address {item_id} not found")
