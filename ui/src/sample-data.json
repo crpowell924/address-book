@@ -1,0 +1,22 @@
+{
+    "addresses": [
+        {
+            "id": 1,
+            "name": "Carlee Turner",
+            "street": "123 Jones Street",
+            "city": "Denver",
+            "state": "Colorado",
+            "zip": 80223,
+            "country": "USA"
+        },
+        {
+            "id": 2,
+            "name": "John Doe",
+            "street": "456 Doe Street",
+            "city": "Denver",
+            "state": "Colorado",
+            "zip": 80223,
+            "country": "USA"
+        }
+    ] 
+}
