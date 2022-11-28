@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  ui:
+    build: ./ui # path to dockerfile
+    ports: # Port binding to host from docker container
+      - "3000:3000" # Bind port 3000 of host to 3000 of container
+    container_name: addressbook-ui
+    restart: always # What to do if container crashes
+    depends_on:
+      - api
+  api:
+    # Create backend container  
+    build: ./api
+    ports:
+      - "8080:8080"
+    container_name: addressbook-api
+    restart: always
+    environment:
+      MONGODB_DATABASE: addressbook
+      MONGODB_USERNAME: user
+      MONGODB_PASSWORD: pass
+      MONGODB_HOSTNAME: mongo
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - ./mongo-volume:/data/db
+      # - ./data/mongo-init:/docker-entrypoint-initdb.d
+    ports:
+      - '27017:27017'
