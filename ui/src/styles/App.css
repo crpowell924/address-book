@@ -14,3 +14,16 @@
   color: white;
 }
 
+.App-body {
+  background-color: #282c34;
+  margin: 2vh 10vh 5vh;
+}
+
+.contacts {
+  margin-bottom: 2vh;
+}
+
+#error-message {
+  color: red;
+  padding-left: 1vw;
+}
