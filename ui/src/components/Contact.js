@@ -14,7 +14,7 @@ const Contact = ({ address, index, handleDelete }) => {
             setGeoState(resp.state);
           })
       }
-    },[])
+    },[address.zip])
 
     return (
       <Accordion.Item eventKey={index}>

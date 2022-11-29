@@ -1,7 +1,4 @@
-import { Accordion, Button } from "react-bootstrap";
-import Contact from "./Contact";
-import { useEffect, useState } from "react";
-import { listAddresses } from "../api-calls/api";
+import { Button } from "react-bootstrap";
 
 const AddContactButton = ({ onClick }) => {
   return (
