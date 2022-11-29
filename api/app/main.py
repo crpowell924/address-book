@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 # DB Connection
-client = MongoClient("mongodb://user:pass@localhost:27017/")
+client = MongoClient("mongodb://user:pass@db:27017/")
 db = client.addressbook
 
 @app.get("/addresses")
