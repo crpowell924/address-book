@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { cityStateLookup, createAddress } from "../api-calls/api";
+import { createAddress } from "../api-calls/addressBookAPI";
+import { cityStateLookup } from "../api-calls/uspsAPI";
 
 const AddContactForm = ({ onSuccess }) => {
   const [form, setForm] = useState({

@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Contacts from "./components/Contacts";
 import AddContact from "./components/AddContact";
 import { useEffect, useState } from "react";
-import { listAddresses } from "./api-calls/api";
+import { listAddresses } from "./api-calls/addressBookAPI";
 
 function App() {
   const [addresses, setAddresses] = useState([]);

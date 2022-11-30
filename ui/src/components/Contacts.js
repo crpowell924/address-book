@@ -1,6 +1,6 @@
 import { Accordion, Card } from "react-bootstrap";
 import Contact from "./Contact";
-import { deleteAddress } from "../api-calls/api";
+import { deleteAddress } from "../api-calls/addressBookAPI";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 
 const Contacts = ({addresses, setAddresses}) => {
