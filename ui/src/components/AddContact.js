@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Modal, Toast, ToastContainer } from 'react-bootstrap';
-import AddContactButton from './AddContactButton';
-import AddContactForm from './AddContactForm';
+import React, { useState } from "react";
+import { Modal, Toast, ToastContainer } from "react-bootstrap";
+import AddContactButton from "./AddContactButton";
+import AddContactForm from "./AddContactForm";
 
-const AddContact = ({addresses, setAddresses}) => {
+const AddContact = ({ addresses, setAddresses }) => {
   const [showModal, setShowModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -13,23 +13,28 @@ const AddContact = ({addresses, setAddresses}) => {
   const onSuccess = (newAddress) => {
     setShowModal(false);
     setShowSuccess(true);
-    setAddresses([...addresses, newAddress])
-  }
+    setAddresses([...addresses, newAddress]);
+  };
 
   return (
     <>
-      <AddContactButton onClick={handleShow}/>
+      <AddContactButton onClick={handleShow} />
 
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Add New Contact to Address Book</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <AddContactForm onSuccess={onSuccess}/>
+          <AddContactForm onSuccess={onSuccess} />
         </Modal.Body>
       </Modal>
       <ToastContainer>
-        <Toast onClose={() => setShowSuccess(false)} show={showSuccess} delay={3000} autohide>
+        <Toast
+          onClose={() => setShowSuccess(false)}
+          show={showSuccess}
+          delay={3000}
+          autohide
+        >
           <Toast.Header>
             <strong className="me-auto">New Contact Added</strong>
             <small>Just now</small>
@@ -39,6 +44,6 @@ const AddContact = ({addresses, setAddresses}) => {
       </ToastContainer>
     </>
   );
-}
+};
 
 export default AddContact;

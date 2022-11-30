@@ -1,41 +1,30 @@
-import { useEffect, useState } from 'react';
-import { Accordion, Button } from 'react-bootstrap';
-import { cityStateLookup } from '../api-calls/api';
+import { Accordion, Button, Col, Row } from "react-bootstrap";
 
 const Contact = ({ address, index, handleDelete }) => {
-    const [city, setCity] = useState("");
-    const [geoState, setGeoState] = useState("");
-
-    useEffect(() => {
-      if (address.zip) {
-        cityStateLookup(address.zip)
-          .then(resp => {
-            setCity(resp.city);
-            setGeoState(resp.state);
-          })
-      }
-    },[address.zip])
-
-    return (
-      <Accordion.Item eventKey={index}>
-        <Accordion.Header>{address.name}</Accordion.Header>
-        <Accordion.Body>
-            {address.address1}
-            <br/>
-            {address.address2}
-            <br/>
-            {city}, {geoState}
-            <br/>
-            {address.zip}
-            <br/>
-            {address.phone}
-            <br/>
-            {address.email}
-            <br/>
-            <Button variant="danger" onClick={() => handleDelete(address._id)}>Delete</Button>
-        </Accordion.Body>
-      </Accordion.Item>
-    );
-}
+  return (
+    <Accordion.Item eventKey={index}>
+      <Accordion.Header>{address.name}</Accordion.Header>
+      <Accordion.Body>
+        <Row>
+          <Col>
+            <h3>Address</h3>
+            <p>{address.address1}<br/>
+            {address.address2 && (<>{address.address2}<br/></>)}
+            {address.cityState}<br/>
+            {address.zip}</p><br/>
+          </Col>
+          <Col>
+            <h3>Contact Information</h3>
+            <p>{address.email ? address.email : "No email"}</p>
+            <p>{address.phone ? address.phone : "No phone number"}</p>
+          </Col>
+        </Row>
+        <Button variant="danger" onClick={() => handleDelete(address._id)}>
+          Delete
+        </Button>
+      </Accordion.Body>
+    </Accordion.Item>
+  );
+};
 
 export default Contact;

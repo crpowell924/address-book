@@ -1,5 +1,5 @@
 import axios from "axios";
-import {convertXML} from 'simple-xml-to-json';
+import { convertXML } from "simple-xml-to-json";
 
 const baseURL = "http://localhost:8080/addresses";
 
@@ -49,15 +49,23 @@ export const cityStateLookup = async (zip) => {
     "http://production.shippingapis.com/ShippingAPITest.dll?API=CityStateLookup&XML=";
 
   const xml = `<CityStateLookupRequest USERID="${userId}"><ZipCode ID="0"><Zip5>${zip}</Zip5></ZipCode></CityStateLookupRequest>`;
-  const response = await axios.get(`${url}${xml}`)
+  const response = await axios
+    .get(`${url}${xml}`)
     .then((resp) => {
-      const jsonData = convertXML(resp.data).CityStateLookupResponse;
-      console.log(jsonData);
-      return { 
-        city: jsonData.children[0].ZipCode.children[1].City.content,
-        state: jsonData.children[0].ZipCode.children[2].State.content
-      };
+      const zipCodeData = convertXML(resp.data).CityStateLookupResponse
+        .children[0].ZipCode.children;
+      console.log(zipCodeData);
+      if (zipCodeData[0].Error) {
+        console.log("error thrown");
+        throw Error("Invalid Zip Code");
+      }
+      let city = zipCodeData[1].City.content;
+      let state = zipCodeData[2].State.content;
+      city = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+      return { city, state };
     })
-    .catch((err) => console.error(err));
-    return response;
+    .catch((err) => {
+      throw err;
+    });
+  return response;
 };

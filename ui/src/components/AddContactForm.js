@@ -1,29 +1,54 @@
 import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { createAddress } from "../api-calls/api";
+import { cityStateLookup, createAddress } from "../api-calls/api";
 
-const AddContactForm = ({onSuccess}) => {
+const AddContactForm = ({ onSuccess }) => {
   const [form, setForm] = useState({
     name: "",
     phone: "",
     email: "",
     address1: "",
     address2: "",
+    cityState: "",
     zip: "",
   });
   const [error, setError] = useState("");
-  
+  const [validated, setValidated] = useState(false);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+
+    if (e.target.name === "zip") {
+      const zip = e.target.value.slice(0, 5);
+      if (e.target.value.length === 5) {
+        setError("");
+        cityStateLookup(e.target.value)
+          .then((resp) => {
+            setForm({ ...form, cityState: `${resp.city}, ${resp.state}`, zip });
+          })
+          .catch((err) => {
+            setError(err.message);
+            setForm({ ...form, cityState: "--", zip });
+          });
+      } else {
+        setForm({ ...form, cityState: "--", zip });
+      }
+    }
   };
-  const submitButton = (e) => {
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(form);
-    createAddress(form).then(resp => onSuccess(resp)).catch(err => setError(err.message));
+    if (e.currentTarget.checkValidity() === false) {
+        e.stopPropogation();
+    }
+    setValidated(true)
+    createAddress(form)
+      .then((resp) => onSuccess(resp))
+      .catch((err) => setError(err.message));
   };
 
   return (
-    <Form>
+    <Form validated={validated} onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="formBasicName">
         <Form.Label>Name</Form.Label>
         <Form.Control
@@ -32,7 +57,11 @@ const AddContactForm = ({onSuccess}) => {
           value={form.name}
           onChange={handleChange}
           placeholder="First Last"
+          required
         />
+        <Form.Control.Feedback type="invalid">
+          Please provide a name for the contact.
+        </Form.Control.Feedback>
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicPhone">
         <Form.Label>Phone Number</Form.Label>
@@ -43,6 +72,7 @@ const AddContactForm = ({onSuccess}) => {
           onChange={handleChange}
           placeholder="(123)456-7890"
         />
+        <Form.Text>Optional</Form.Text>
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicEmail">
         <Form.Label>Email</Form.Label>
@@ -53,18 +83,23 @@ const AddContactForm = ({onSuccess}) => {
           onChange={handleChange}
           placeholder="example@gmail.com"
         />
+        <Form.Text>Optional</Form.Text>
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicAddress">
         <Form.Label>Address</Form.Label>
         <br />
-        <Form.Text>Line 1</Form.Text>
+        <Form.Text>Street 1</Form.Text>
         <Form.Control
           type="address"
           name="address1"
           value={form.address1}
           onChange={handleChange}
+          required
         />
-        <Form.Text>Line 2</Form.Text>
+        <Form.Control.Feedback type="invalid">
+          Please provide a street address
+        </Form.Control.Feedback>
+        <Form.Text>Street 2</Form.Text>
         <Form.Control
           type="address"
           name="address2"
@@ -77,9 +112,20 @@ const AddContactForm = ({onSuccess}) => {
           name="zip"
           value={form.zip}
           onChange={handleChange}
+          required
+        />
+        <Form.Control.Feedback type="invalid">
+          Please provide a zip code.
+        </Form.Control.Feedback>
+        <Form.Text>City, State</Form.Text>
+        <Form.Control
+          type="address"
+          name="cityState"
+          value={form.cityState}
+          disabled
         />
       </Form.Group>
-      <Button variant="primary" type="submit" onClick={submitButton}>
+      <Button variant="primary" type="submit" disabled={!!error}>
         Submit
       </Button>
       <Form.Text id="error-message">{error}</Form.Text>
