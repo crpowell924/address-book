@@ -33,7 +33,6 @@ export const deleteAddress = async (id) => {
   const response = await axios
     .delete(`${baseURL}/${id}`)
     .then((resp) => {
-      console.log(resp);
       return resp.data;
     })
     .catch((error) => {

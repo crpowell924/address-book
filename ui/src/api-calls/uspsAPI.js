@@ -12,9 +12,7 @@ export const cityStateLookup = async (zip) => {
     .then((resp) => {
       const zipCodeData = convertXML(resp.data).CityStateLookupResponse
         .children[0].ZipCode.children;
-      console.log(zipCodeData);
       if (zipCodeData[0].Error) {
-        console.log("error thrown");
         throw Error("Invalid Zip Code");
       }
       let city = zipCodeData[1].City.content;
