@@ -64,5 +64,5 @@ def delete_address(item_id: str):
     addresses = db.addresses
     address = addresses.delete_one({"_id": ObjectId(item_id) })
     if (address.deleted_count == 1):
-        return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+        return JSONResponse(status_code=status.HTTP_200_OK)
     return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, detail=f"Address {item_id} not found")
